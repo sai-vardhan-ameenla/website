@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vardhan Design Labs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.38.1/minified.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      cursor: none; /* Hide default cursor */
+    }
+    /* Custom Cursor */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: 1000;
+      will-change: transform, opacity, width, height;
+    }
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background: #00ffe5;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, opacity 0.3s ease;
+    }
+    .cursor-ring {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #00ffe5;
+      transform: translate(-50%, -50%) scale(1);
+      transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
+      opacity: 0.7;
+    }
+    .cursor-ring.hovered {
+      transform: translate(-50%, -50%) scale(1.5);
+      border-color: #fff;
+      opacity: 1;
+    }
+    /* Hide cursor on touch devices */
+    @media (pointer: coarse) {
+      body {
+        cursor: auto;
+      }
+      .cursor-dot, .cursor-ring {
+        display: none;
+      }
+    }
+    /* Header */
+    header {
+      background: #111;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      color: #00ffe5;
+      font-weight: 700;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background: #00ffe5;
+      transition: width 0.3s;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: #00ffe5;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 40px;
+        background: #111;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      nav ul.active {
+        display: flex;
+      }
+      .hamburger {
+        display: block;
+      }
+    }
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 40px;
+      background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 700px;
+    }
+    .hero h2 {
+      font-size: 3.5rem;
+      color: #00ffe5;
+      margin-bottom: 20px;
+    }
+    .hero .typed-text {
+      font-size: 1.5rem;
+      color: #ccc;
+      min-height: 2rem;
+    }
+    .hero button {
+      margin-top: 30px;
+      padding: 14px 30px;
+      background: #00ffe5;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.3s;
+    }
+    .hero button:hover {
+      transform: scale(1.05);
+    }
+    /* About */
+    #about {
+      padding: 80px 30px;
+    }
+    #about h3 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffe5;
+    }
+    .about-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 30px;
+    }
+    .about-image {
+      flex: 0 1 300px;
+      max-width: 300px;
+      max-height: 300px;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 255, 229, 0.2);
+    }
+    .about-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .about-text {
+      flex: 1;
+      min-width: 280px;
+      padding: 20px;
+    }
+    .about-text h4 {
+      color: #00ffe5;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    .about-text p {
+      color: #ccc;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+    @media (max-width: 768px) {
+      .about-image {
+        max-width: 250px;
+        max-height: 250px;
+      }
+      .about-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+    /* Portfolio */
+    #portfolio {
+      padding: 80px 30px;
+    }
+    #portfolio h3 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffe5;
+    }
+    .portfolio-filters {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .portfolio-filters button {
+      background: #1c1c1c;
+      color: #fff;
+      border: 1px solid #00ffe5;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .portfolio-filters button.active {
+      background: #00ffe5;
+      color: #000;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .portfolio-item {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .portfolio-item.hidden {
+      display: none;
+    }
+    .portfolio-item:hover {
+      transform: scale(1.05);
+    }
+    .portfolio-item h4 {
+      color: #00ffe5;
+      margin-bottom: 10px;
+    }
+    .portfolio-item iframe {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    .portfolio-item p {
+      margin-top: 10px;
+      color: #ccc;
+    }
+    /* Services */
+    #services {
+      padding: 80px 30px;
+      background: #111;
+    }
+    #services h3 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffe5;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 20px rgba(0, 255, 229, 0.3);
+    }
+    .service-card i {
+      font-size: 2rem;
+      color: #00ffe5;
+      margin-bottom: 15px;
+    }
+    .service-card h4 {
+      color: #00ffe5;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    .service-card p {
+      color: #ccc;
+      line-height: 1.6;
+    }
+    /* Testimonials */
+    #testimonials {
+      padding: 80px 30px;
+    }
+    #testimonials h3 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffe5;
+    }
+    .testimonial-carousel {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonial-item {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+    }
+    .testimonial-item.active {
+      display: block;
+    }
+    .testimonial-item p {
+      color: #ccc;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    .testimonial-item h4 {
+      color: #00ffe5;
+      font-size: 1rem;
+    }
+    /* Contact */
+    #contact {
+      padding: 80px 30px;
+      background: #111;
+    }
+    #contact h3 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffe5;
+    }
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background: #2b2b2b;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .form-group label {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      color: #ccc;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    .form-group input:focus + label,
+    .form-group textarea:focus + label,
+    .form-group input:not(:placeholder-shown) + label,
+    .form-group textarea:not(:placeholder-shown) + label {
+      top: -20px;
+      left: 0;
+      font-size: 0.8rem;
+      color: #00ffe5;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      box-shadow: 0 0 10px rgba(0, 255, 229, 0.5);
+      outline: none;
+    }
+    .contact-form button {
+      background: #00ffe5;
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .contact-form button:hover {
+      transform: scale(1.05);
+    }
+    /* Back to Top */
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00ffe5;
+      color: #000;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      display: none;
+      font-size: 1.2rem;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s;
+    }
+    .back-to-top.show {
+      display: flex;
+    }
+    /* Footer */
+    footer {
+      background: #111;
+      padding: 40px 20px;
+      text-align: center;
+      color: #aaa;
+    }
+    .footer-socials {
+      margin-bottom: 20px;
+    }
+    .footer-socials a {
+      color: #00ffe5;
+      font-size: 1.5rem;
+      margin: 0 10px;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-socials a:hover {
+      color: #fff;
+    }
+    .newsletter-form {
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    .newsletter-form input {
+      width: 70%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px 0 0 5px;
+      background: #2b2b2b;
+      color: #fff;
+    }
+    .newsletter-form button {
+      width: 30%;
+      padding: 10px;
+      border: none;
+      background: #00ffe5;
+      color: #000;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+    /* Loading Animation */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f0f0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loader::before {
+      content: '';
+      width: 50px;
+      height: 50px;
+      border: 5px solid #00ffe5;
+      border-top: 5px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader"></div>
+  <!-- Custom Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <!-- Header -->
+  <header>
+    <h1>Vardhan Design Labs</h1>
+    <nav>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger">☰</button>
+    </nav>
+  </header>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h2 class="animate">AI-Powered Design Solutions</h2>
+      <div class="typed-text animate"></div>
+      <button class="animate">Let's Build Together</button>
+    </div>
+  </section>
+  <!-- About -->
+  <section id="about">
+    <h3 class="animate">About Me</h3>
+    <div class="about-content">
+      <div class="about-image animate">
+        <img src="edit face.jpeg" alt="Sai Vardhan" onerror="this.src='https://via.placeholder.com/300?text=Image+Not+Found'">
+      </div>
+      <div class="about-text">
+        <h4 class="animate">Sai Vardhan – Founder</h4>
+        <p class="animate">I'm a passionate developer and automation engineer dedicated to helping businesses grow through intelligent systems, stunning websites, and powerful tools. My experience spans AI resume builders to local marketplace platforms.</p>
+        <p class="animate">With a strong foundation in software development and a keen eye for modern UI/UX, I aim to create projects that are functional, beautiful, and scalable.</p>
+      </div>
+    </div>
+  </section>
+  <!-- Portfolio -->
+  <section id="portfolio">
+    <h3 class="animate">Our Work</h3>
+    <div class="portfolio-filters">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="ai">AI Automation</button>
+      <button data-filter="website">Websites</button>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item animate" data-category="ai">
+        <h4>RapidRabbit.ai</h4>
+        <iframe src="https://rapidrabbit.ai" alt="Portfolio"></iframe>
+        <p>AI-powered automation toolset for businesses, built for performance.</p>
+      </div>
+      <div class="portfolio-item animate" data-category="website">
+        <h4>TheTecBuddy.com</h4>
+        <iframe src="https://thetecbuddy.com" alt="Website"></iframe>
+        <p>Modern UI/UX website for a product development & tech services agency.</p>
+      </div>
+    </div>
+  </section>
+  <!-- Services -->
+  <section id="services">
+    <h3 class="animate">Our Services</h3>
+    <div class="services-grid">
+      <div class="service-card animate">
+        <i>🤖</i>
+        <h4>AI-Powered Automation</h4>
+        <p>We build AI-driven bots and backend systems to streamline operations, answer queries, and generate leads effortlessly.</p>
+      </div>
+      <div class="service-card animate">
+        <i>🌐</i>
+        <h4>Website Development</h4>
+        <p>We create fast, mobile-optimized, and visually stunning websites to elevate your brand's online presence.</p>
+      </div>
+      <div class="service-card animate">
+        <i>🎨</i>
+        <h4>UI/UX Design</h4>
+        <p>We design intuitive and visually appealing interfaces that enhance user engagement and satisfaction.</p>
+      </div>
+    </div>
+  </section>
+  <!-- Testimonials -->
+  <section id="testimonials">
+    <h3 class="animate">What Our Clients Say</h3>
+    <div class="testimonial-carousel">
+      <div class="testimonial-item active animate">
+        <p>"Vardhan Design Labs transformed our business with their AI automation tools. Highly recommended!"</p>
+        <h4>John Doe, CEO of TechCorp</h4>
+      </div>
+      <div class="testimonial-item animate">
+        <p>"The website they built for us is stunning and performs flawlessly across devices."</p>
+        <h4>Jane Smith, Founder of StartupX</h4>
+      </div>
+    </div>
+  </section>
+  <!-- Contact -->
+  <section id="contact">
+    <h3 class="animate">Get in Touch</h3>
+    <form id="contact-form" class="contact-form" action="https://formsubmit.co/saivardhanbusiness@gmail.com" method="POST">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="form-group">
+        <input type="text" id="name" name="name" placeholder=" " required>
+        <label for="name">Your Name</label>
+      </div>
+      <div class="form-group">
+        <input type="email" id="email" name="email" placeholder=" " required>
+        <label for="email">Your Email</label>
+      </div>
+      <div class="form-group">
+        <textarea id="message" name="message" placeholder=" " rows="5" required></textarea>
+        <label for="message">Your Message</label>
+      </div>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+  <!-- Back to Top -->
+  <button class="back-to-top">↑</button>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-socials">
+      <a href="#">𝕏</a>
+      <a href="#">📸</a>
+      <a href="#">🔗</a>
+    </div>
+    <div class="newsletter-form">
+      <form>
+        <input type="email" placeholder="Subscribe to our newsletter" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+    <p>© 2025 Vardhan Design Labs. All rights reserved.</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Register GSAP Plugins
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && typeof ScrollToPlugin !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+      } else {
+        console.warn('GSAP or its plugins not loaded');
+      }
+
+      // Custom Cursor
+      const cursorDot = document.querySelector('.cursor-dot');
+      const cursorRing = document.querySelector('.cursor-ring');
+      if (cursorDot && cursorRing && window.matchMedia('(pointer: fine)').matches) {
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+        const lerp = (a, b, n) => (1 - n) * a + n * b;
+
+        document.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        });
+
+        function animateCursor() {
+          ringX = lerp(ringX, mouseX, 0.1);
+          ringY = lerp(ringY, mouseY, 0.1);
+          cursorRing.style.transform = `translate(${ringX}px, ${ringY}px)`;
+          requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effects
+        document.querySelectorAll('a, button, input, textarea').forEach(elem => {
+          elem.addEventListener('mouseenter', () => cursorRing.classList.add('hovered'));
+          elem.addEventListener('mouseleave', () => cursorRing.classList.remove('hovered'));
+        });
+      } else {
+        document.body.style.cursor = 'auto';
+        if (cursorDot) cursorDot.style.display = 'none';
+        if (cursorRing) cursorRing.style.display = 'none';
+      }
+
+      // Loader
+      setTimeout(() => {
+        const loader = document.querySelector('.loader');
+        if (loader) loader.classList.add('hidden');
+      }, 1500);
+
+      // Hamburger Menu
+      const hamburger = document.querySelector('.hamburger');
+      const navUl = document.querySelector('nav ul');
+      if (hamburger && navUl) {
+        hamburger.addEventListener('click', () => {
+          navUl.classList.toggle('active');
+        });
+      }
+
+      // Smooth Scroll
+      document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = anchor.getAttribute('href');
+          const target = document.querySelector(targetId);
+          if (target && typeof gsap !== 'undefined' && typeof ScrollToPlugin !== 'undefined') {
+            gsap.to(window, { scrollTo: target, duration: 1, ease: 'power2.out' });
+          } else {
+            window.scrollTo({ top: target ? target.offsetTop : 0, behavior: 'smooth' });
+          }
+          if (navUl && navUl.classList.contains('active')) {
+            navUl.classList.remove('active');
+          }
+        });
+      });
+
+      // Typed.js for Hero
+      if (typeof Typed !== 'undefined') {
+        try {
+          new Typed('.typed-text', {
+            strings: ['Innovate with AI', 'Scale with Smart Tech', 'Build Stunning Websites'],
+            typeSpeed: 50,
+            backSpeed: 30,
+            backDelay: 1000,
+            loop: true
+          });
+        } catch (e) {
+          console.warn('Typed.js initialization failed:', e);
+        }
+      }
+
+      // Scroll Animations
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.utils.toArray('.animate').forEach(el => {
+          gsap.from(el, {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 80%',
+              end: 'bottom 20%',
+              scrub: true
+            }
+          });
+        });
+      }
+
+      // Portfolio Filter
+      document.querySelectorAll('.portfolio-filters button').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.portfolio-filters button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          const filter = button.getAttribute('data-filter');
+          document.querySelectorAll('.portfolio-item').forEach(item => {
+            if (filter === 'all' || item.getAttribute('data-category') === filter) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Testimonial Carousel
+      const testimonials = document.querySelectorAll('.testimonial-item');
+      let currentTestimonial = 0;
+      function showTestimonial(index) {
+        testimonials.forEach((item, i) => {
+          item.classList.toggle('active', i === index);
+        });
+      }
+      if (testimonials.length > 0) {
+        setInterval(() => {
+          currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+          showTestimonial(currentTestimonial);
+        }, 5000);
+      }
+
+      // Back to Top
+      const backToTopBtn = document.querySelector('.back-to-top');
+      if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) {
+            backToTopBtn.classList.add('show');
+          } else {
+            backToTopBtn.classList.remove('show');
+          }
+        });
+        backToTopBtn.addEventListener('click', () => {
+          if (typeof gsap !== 'undefined' && typeof ScrollToPlugin !== 'undefined') {
+            gsap.to(window, { scrollTo: 0, duration: 1, ease: 'power2.out' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      }
+
+      // Form Validation
+      const form = document.getElementById('contact-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('name').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const message = document.getElementById('message').value.trim();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (name && emailRegex.test(email) && message) {
+            form.submit();
+            form.reset();
+            alert('Message sent successfully!');
+          } else {
+            alert('Please fill in all fields correctly.');
+          }
+        });
+      }
+
+      // Newsletter Form
+      const newsletterForm = document.querySelector('.newsletter-form');
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Thank you for subscribing!');
+          e.target.reset();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
